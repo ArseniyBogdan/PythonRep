@@ -1,4 +1,5 @@
 import math
+import unittest
 
 
 class Quaternion(object):
@@ -67,20 +68,46 @@ class Quaternion(object):
                        math.sin(angle / 2) * n_axis.d)
         return self.quat_rotate(q)
 
+    def __eq__(self, other):
+        return (self.a, self.b, self.c, self.d) == (other.a, other.b, other.c, other.d)
+
 
 class NotImQuatException(Exception):  # исключение для не чисто мнимого кватерниона,
 
     pass
 
 
-q1 = Quaternion(0, 2.7, 9.8, 7.7)
-q2 = Quaternion(1, -2, -3, 4)
-print("sum:", (q1+q2))
-print("subtract:", (q1-q2))
-print("multiply:", q1*q2)
-print("divide:", q1/q2 )
-print("rotate by quaternion: ", q1.quat_rotate(q2))
-print("rotate by axis and angle: ", q1.angle_axis_rotate(Quaternion(0,0,0,1), math.pi/3))
+class Tester(unittest.TestCase):
+    def setUp(self):
+        self.q1 = Quaternion(0, 2.7, 9.8, 7.7)
+        self.q2 = Quaternion(1, -2, -3, 4)
 
-#print(q1 / Quaternion(0, 0, 0, 0))  # деление на 0
-#print(q1.angle_axis_rotate(Quaternion(1, 0, 0, 0), math.pi / 3))  # вращение вокруг не чисто мнимого кватерниона
+    def tearDown(self):
+        print("\nTest case completed. Result:")
+
+    def test_sum(self):
+        q_sum = Quaternion(1, 0.7, 6.8, 11.7)
+        print(self.q1 + self.q2, "expected", q_sum)
+
+    def test_sub(self):
+        q_sub = Quaternion(-1, 4.7, 12.8, 3.7)
+        print(self.q1 - self.q2, "expected", q_sub)
+
+    def test_mul(self):
+        q_mul = (4.0, 65.0, -16.4, 19.2)
+        print(self.q1 * self.q2, "expected", q_mul)
+
+    def test_div(self):
+        q_div = Quaternion(-0.13333333333333344, -1.9866666666666668, 1.2, -0.12666666666666668)
+        print(self.q1 / self.q2, "expected", q_div)
+        # print(q1 / Quaternion(0, 0, 0, 0))  # деление на 0
+
+    def test_rotate(self):
+        print("rotate by quaternion: ", self.q1.quat_rotate(self.q2))
+        print("rotate by axis and angle: ", self.q1.angle_axis_rotate(Quaternion(0, 0, 0, 1), math.pi / 3))
+        # print(q1.angle_axis_rotate(Quaternion(1, 0, 0, 0), math.pi / 3))  # вращение вокруг не чисто мнимого кватерниона
+
+
+if __name__ == "__main__":
+    unittest.main()
+
